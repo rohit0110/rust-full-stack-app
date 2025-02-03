@@ -15,15 +15,16 @@ struct User {
 #[post("/api/users", data = "<user>")]
 async fn add_user(
     conn: &State<Client>,
-    user: Json<User>,
+    user: Json<User>
 ) -> Result<Json<Vec<User>>, Custom<String>> {
     execute_query(
         conn,
-        "INSERT INTO users (name, email) values ($1, $2)",
+        "INSERT INTO users (name, email) VALUES ($1, $2)",
         &[&user.name, &user.email]
-    );
+    ).await?;
     get_users(conn).await
 }
+
 
 #[get("/api/users")]
 async fn get_users(conn: &State<Client>) -> Result<Json<Vec<User>>, Custom<String>> {
